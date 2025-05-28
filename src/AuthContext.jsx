@@ -38,8 +38,34 @@ export function AuthProvider({ children }) {
   }
 
   // TODO: authenticate
+  async function authenticate(token) {
+    try {
+      // In order to attach a token to a request, you have to
+      // set the Authorization header of the request headers
+      const response = await fetch(API + "/authenticate", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      console.log(result);
 
-  const value = { location, signup };
+      //set location to tablet once the API call comes back successfully
+      if (result.token) {
+        console.log(result.token);
+        setToken(result.token);
+        setLocation("TUNNEL");
+      }
+      // This will depend on the API you're actually working with
+      return result.token;
+    } catch (e) {
+      console.error("oh no ;(");
+    }
+  }
+
+  const value = { location, signup, authenticate };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
