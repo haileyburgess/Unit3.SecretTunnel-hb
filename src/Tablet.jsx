@@ -4,9 +4,6 @@ import { useAuth } from "./AuthContext";
 export default function Tablet() {
   // TODO: call authenticate when form is submitted
 const { authenticate } = useAuth();
-const moveForward = (formData) => {
-  authenticate(formData);
-}
 
   return (
     <section>
@@ -22,7 +19,7 @@ const moveForward = (formData) => {
       <p>
         It holds out a rectangular stone tablet carved with an intricate design.
       </p>
-      <form action={moveForward}>
+      <form action={authenticate}>
         <button>Place your palm upon the tablet.</button>
       </form>
     </section>

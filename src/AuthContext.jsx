@@ -18,18 +18,13 @@ export function AuthProvider({ children }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "lincoln",
+          username: "username",
         }),
       });
       const result = await response.json();
       console.log(result, "\n");
-
-      //set location to tablet once the API call comes back successfully
-      if (result.token) {
-        console.log(result.token);
         setToken(result.token);
         setLocation("TABLET");
-      }
       // This will depend on the API you're actually working with
       return result.token;
     } catch (e) {
@@ -38,32 +33,19 @@ export function AuthProvider({ children }) {
   }
 
   // TODO: authenticate
-  async function authenticate(token) {
+  /** Sends the token to the API to authenticate the user. */
+  const authenticate = async () => {
     try {
-      // In order to attach a token to a request, you have to
-      // set the Authorization header of the request headers
+      if (!token) throw Error("No token found.");
       const response = await fetch(API + "/authenticate", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const result = await response.json();
-      console.log(result);
-
-      //set location to tablet once the API call comes back successfully
-      if (result.token) {
-        console.log(result.token);
-        setToken(result.token);
-        setLocation("TUNNEL");
-      }
-      // This will depend on the API you're actually working with
-      return result.token;
+      if (!response.ok) throw Error("Authentication failed.");
+      setLocation("TUNNEL");
     } catch (e) {
-      console.error("oh no ;(");
+      console.error(e);
     }
-  }
+  };
 
   const value = { location, signup, authenticate };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
